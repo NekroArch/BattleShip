@@ -1,11 +1,11 @@
 package org.example.players;
 
-import org.example.bord.Board;
-import org.example.bord.BoardFactory;
-import org.example.ship.Direction;
+import org.example.board.Impl.Board;
+import org.example.board.BoardFactory;
+import org.example.enums.Direction;
 import org.example.ship.Position;
 import org.example.ship.Ship;
-import org.example.ship.ShipType;
+import org.example.enums.ShipType;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -17,21 +17,18 @@ public abstract class AbstractBattleShipPlayer {
 
     protected final String name;
     protected final Board enemyBord;
-    Map<ShipType, Integer> shipTypeToCount;
+    protected Map<ShipType, Integer> shipTypeToCount;
     protected static final Random random = new Random();
-    OutputStream shootResultStream;
+    protected OutputStream shootResultStream;
+    protected float hitCounter;
+    protected float strokeCounter;
 
     public float hitCounter() {
         return hitCounter;
     }
-
     public float hodCounter() {
-        return hodCounter;
+        return strokeCounter;
     }
-
-    protected float hitCounter;
-    protected float hodCounter;//todo
-
     public String name() {
         return name;
     }
@@ -65,7 +62,7 @@ public abstract class AbstractBattleShipPlayer {
                         throw new RuntimeException(e);
                     }
 
-                    System.out.println("Place ship with " + shipType);
+                    System.out.println("Place ship " + shipType);
                 }
 
                 placeShip(shipType, choose);
@@ -79,7 +76,7 @@ public abstract class AbstractBattleShipPlayer {
             playerBoard.addShip(ship);
         } catch (RuntimeException e) {
             if (!choose){
-                System.out.println("error");//todo
+                System.out.println("Repeat");
             }
             placeShip(shipType, choose);
         }

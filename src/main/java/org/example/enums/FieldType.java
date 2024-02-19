@@ -1,4 +1,4 @@
-package org.example.bord;
+package org.example.enums;
 
 public enum FieldType{
     WATER('~'),

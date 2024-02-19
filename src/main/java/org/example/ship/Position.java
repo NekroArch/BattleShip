@@ -2,19 +2,13 @@ package org.example.ship;
 
 import java.util.Objects;
 
-public class Position {
-    private final int column;
-    private final int row;
+public record Position(int row, int column) {
 
-    public Position(int row, int column) {
-        this.column = column;
-        this.row = row;
-    }
     public Position(int row, char column) {
-        this.column = decode(column);
-        this.row = row;
+        this(row, decode(column));
     }
-    private int decode(char column) {
+
+    private static int decode(char column) {
         return column - 'a';
     }
 
@@ -34,13 +28,5 @@ public class Position {
     @Override
     public int hashCode() {
         return Objects.hash(column, row);
-    }
-
-    public int column() {
-        return column;
-    }
-
-    public int row() {
-        return row;
     }
 }

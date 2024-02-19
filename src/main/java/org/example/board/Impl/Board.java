@@ -1,6 +1,9 @@
-package org.example.bord;
+package org.example.board.Impl;
 
-import org.example.event.ShootResult;
+import org.example.board.exceptions.NullShipsException;
+import org.example.board.exceptions.PositionException;
+import org.example.enums.FieldType;
+import org.example.enums.ShootResult;
 import org.example.ship.Position;
 import org.example.ship.Ship;
 
@@ -8,13 +11,8 @@ import java.util.*;
 import java.util.List;
 
 public class Board extends ConstantBoardFactory {
-    public char[][] board() {
-        return board;
-    }
-
     private char[][] board;
     private final int boardLength;
-    //todo подумать над шизой
     private final List<Ship> ships;
 
     public Board(int boardLength) {
@@ -43,7 +41,7 @@ public class Board extends ConstantBoardFactory {
             }
             ships.add(ship);
         } else {
-            throw new PositionException("nIza");//todo
+            throw new PositionException("Wrong position");
         }
     }
 
@@ -83,7 +81,7 @@ public class Board extends ConstantBoardFactory {
                     markAroundDestroyedShip(shipByPosition.get());
 
                     if (ships.stream().allMatch(ship -> ship.health() == 0)){
-                        throw new NullNumberOfShipsException();
+                        throw new NullShipsException();
                     }
 
                     return ShootResult.DESTROY;
@@ -97,7 +95,7 @@ public class Board extends ConstantBoardFactory {
                 return ShootResult.MISS;
 
             } else {
-                throw new PositionException("Niza");//todo
+                throw new PositionException("Wrong shoot position");
             }
         }
         throw new PositionException("Position out of bound");
@@ -107,7 +105,6 @@ public class Board extends ConstantBoardFactory {
         return boardLength;
     }
 
-    //todo
     private void markAroundDestroyedShip(Ship ship) {
 
         int[] xOffset = {-1, 0, 1, -1, 1, -1, 0, 1};
@@ -157,7 +154,6 @@ public class Board extends ConstantBoardFactory {
         return counter;
     }
 
-    //todo
     private void markAroundDestroyedEnemyShip(Position position) {
 
         int[] xOffset = {-1, 0, 1, -1, 1, -1, 0, 1};
@@ -185,6 +181,10 @@ public class Board extends ConstantBoardFactory {
 
     public long getCountShipsWithoutHits() {
         return ships.stream().filter(ship -> ship.health() == ship.length()).count();
+    }
+
+    public char[][] board() {
+        return board;
     }
 }
 

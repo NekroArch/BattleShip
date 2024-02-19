@@ -1,7 +1,8 @@
-package org.example.bord;
+package org.example.board.Impl;
 
-public class ConstantBoardFactory implements BoardFactory{
+import org.example.board.BoardFactory;
 
+public class ConstantBoardFactory implements BoardFactory {
     private static final int BOARD_LENGTH = 16;
 
     @Override

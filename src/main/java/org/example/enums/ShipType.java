@@ -1,4 +1,4 @@
-package org.example.ship;
+package org.example.enums;
 
 public enum ShipType {
     ONE(1),

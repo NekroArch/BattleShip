@@ -1,18 +1,25 @@
-package org.example.players;
+package org.example.players.Impl;
 
-import org.example.bord.*;
-import org.example.event.ShootResult;
+import org.example.board.*;
+import org.example.board.exceptions.NullShipsException;
+import org.example.board.exceptions.PositionException;
+import org.example.enums.FieldType;
+import org.example.enums.ShootResult;
 import org.example.event.Shootable;
+import org.example.players.AbstractBattleShipPlayer;
+import org.example.players.BattleShipPlayer;
+import org.example.players.exceptions.WinException;
 import org.example.ship.Position;
 import org.example.ship.Ship;
-import org.example.ship.ShipType;
+import org.example.enums.ShipType;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.*;
 
 public class Bot extends AbstractBattleShipPlayer implements Shootable, BattleShipPlayer {
-    int lastHitX = -1, lastHitY = -1;
+    private int lastHitX = -1;
+    private int lastHitY = -1;
     private int firstHitX = -1;
     private int firstHitY = -1;
     private int currentDirection = 0;
@@ -64,7 +71,7 @@ public class Bot extends AbstractBattleShipPlayer implements Shootable, BattleSh
     }
 
     @Override
-    public ShootResult shoot(Position position) throws PositionException, NullNumberOfShipsException {
+    public ShootResult checkShootAtPosition(Position position) throws PositionException, NullShipsException {
         return playerBoard.shoot(position);
     }
 
@@ -72,24 +79,23 @@ public class Bot extends AbstractBattleShipPlayer implements Shootable, BattleSh
     public void doTurn(Shootable shootable) throws IOException {
         try {
             Position position = generateShoot();
-            ShootResult shoot = shootable.shoot(position);
+            ShootResult shoot = shootable.checkShootAtPosition(position);
 
             shootResultStream.write((name + " shoot at " + position + "\n" + shoot + "\n").getBytes());
 
             enemyBord.setMarkOnBordByShootResult(shoot, position);
+
+            strokeCounter++;
             if (shoot == ShootResult.HIT || shoot == ShootResult.DESTROY) {
                 hitCounter++;
-                hodCounter++;
                 recordShotResult(position, shoot);
                 doTurn(shootable);
-            }else{
-                hodCounter++;
             }
         } catch (PositionException e) {
             doTurn(shootable);
         } catch (ArrayIndexOutOfBoundsException e){
             currentDirection = (currentDirection + 1) % 4;
-        } catch (NullNumberOfShipsException e){
+        } catch (NullShipsException e){
             throw new WinException(name + " win");
         }
     }

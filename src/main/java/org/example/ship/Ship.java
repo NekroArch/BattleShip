@@ -1,13 +1,15 @@
 package org.example.ship;
 
+import org.example.enums.Direction;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Ship {
     private final int length;
-    private Position startPosition;
-    private List<Position> positionPoint;
-    private Direction direction;
+    private final Position startPosition;
+    private final List<Position> positionPoint;
+    private final Direction direction;
 
     public int health() {
         return health;

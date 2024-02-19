@@ -1,4 +1,6 @@
-package org.example.ship;
+package org.example.enums;
+
+import org.example.enums.Exception.DirectionException;
 
 public enum Direction {
     HORIZONTAL,
@@ -11,7 +13,7 @@ public enum Direction {
         else if (direction == 'v' || direction == 'V'){
             return VERTICAL;
         }
-        throw new RuntimeException("INPUT NORM");
+        throw new DirectionException("Input v or h");
     }
 
 }

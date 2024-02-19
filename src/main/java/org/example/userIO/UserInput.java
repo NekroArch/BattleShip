@@ -1,12 +1,11 @@
-package org.example;
+package org.example.userIO;
 
-import org.example.bord.Board;
-import org.example.ship.Direction;
+import org.example.enums.Direction;
 import org.example.ship.Position;
 
 import java.util.Scanner;
 
-public class UserIO {
+public class UserInput {
     private final Scanner scanner = new Scanner(System.in);
 
     public Position readPosition() {

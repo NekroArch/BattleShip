@@ -1,35 +1,39 @@
-package org.example.players;
+package org.example.players.Impl;
 
-import org.example.UserIO;
-import org.example.bord.BoardFactory;
-import org.example.bord.NullNumberOfShipsException;
-import org.example.bord.PositionException;
-import org.example.event.ShootResult;
+import org.example.players.exceptions.WinException;
+import org.example.userIO.UserInput;
+import org.example.board.BoardFactory;
+import org.example.board.exceptions.NullShipsException;
+import org.example.board.exceptions.PositionException;
+import org.example.enums.Direction;
+import org.example.enums.ShipType;
+import org.example.enums.ShootResult;
 import org.example.event.Shootable;
-import org.example.ship.Direction;
+import org.example.players.AbstractBattleShipPlayer;
+import org.example.players.BattleShipPlayer;
 import org.example.ship.Position;
 import org.example.ship.Ship;
-import org.example.ship.ShipType;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.*;
+import java.util.Map;
 
-public class MeetPlayer extends AbstractBattleShipPlayer implements Shootable, BattleShipPlayer{
-    private final UserIO userIO = new UserIO(); //TODO убрать
+public class Player extends AbstractBattleShipPlayer implements Shootable, BattleShipPlayer {
+    private final UserInput userIO;
 
-    public MeetPlayer(String name, Map<ShipType, Integer> ships, BoardFactory board, OutputStream shootResultStream) {
+    public Player(String name, Map<ShipType, Integer> ships, BoardFactory board, OutputStream shootResultStream) {
         super(name, ships, board, shootResultStream);
+        userIO = new UserInput();
     }
 
     @Override
     protected Position generateShoot() throws NumberFormatException {
         do {
             Position position = userIO.readPosition();
-            if (playerBoard.positionNotOutside(position.row(), position.column())){
+            if (playerBoard.positionNotOutside(position.row(), position.column())) {
                 return position;
-            }else{
-                System.out.println("POWTOR");//todo
+            } else {
+                System.out.println("Repeat");
             }
         } while (true);
     }
@@ -54,36 +58,34 @@ public class MeetPlayer extends AbstractBattleShipPlayer implements Shootable, B
     }
 
     @Override
-    public ShootResult shoot(Position position) throws PositionException, NullNumberOfShipsException {
+    public ShootResult checkShootAtPosition(Position position) throws PositionException, NullShipsException {
         return playerBoard.shoot(position);
     }
 
     @Override
-    public void doTurn(Shootable shootable) throws IOException {
+    public void doTurn(Shootable shootable) throws IOException, NullShipsException{
 
         printBoards(System.out);
 
         try {
             Position position = generateShoot();
-            ShootResult shoot = shootable.shoot(position);
+            ShootResult shoot = shootable.checkShootAtPosition(position);
 
             shootResultStream.write((name + " shoot at " + position + "\n" + shoot + "\n").getBytes());
 
             enemyBord.setMarkOnBordByShootResult(shoot, position);
 
+            strokeCounter++;
             if (shoot == ShootResult.HIT || shoot == ShootResult.DESTROY) {
                 hitCounter++;
-                hodCounter++;
+
                 doTurn(shootable);
-            }else{
-                hodCounter++;
             }
         } catch (PositionException | NumberFormatException e) {
             doTurn(shootable);
-        } catch (NullNumberOfShipsException e){
+        } catch (NullShipsException e){
             throw new WinException(name + " win");
         }
-
     }
 
 }
